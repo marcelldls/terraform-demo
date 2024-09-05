@@ -69,7 +69,6 @@ resource "azurerm_public_ip" "mtc-ip" {
   resource_group_name = azurerm_resource_group.mtc-rg.name
   location            = azurerm_resource_group.mtc-rg.location
   allocation_method   = "Dynamic"
-
   tags = {
     environment = "dev"
   }
@@ -79,6 +78,9 @@ resource "azurerm_network_interface" "name" {
   name                = "mtc-nic"
   location            = azurerm_resource_group.mtc-rg.location
   resource_group_name = azurerm_resource_group.mtc-rg.name
+  tags = {
+    environment = "dev"
+  }
 
   ip_configuration {
     name                          = "internal"
@@ -87,7 +89,5 @@ resource "azurerm_network_interface" "name" {
     public_ip_address_id          = azurerm_public_ip.mtc-ip.id
   }
 
-  tags = {
-    environment = "dev"
-  }
+
 }
