@@ -74,7 +74,7 @@ resource "azurerm_public_ip" "mtc-ip" {
   }
 }
 
-resource "azurerm_network_interface" "name" {
+resource "azurerm_network_interface" "mtc-nic" {
   name                = "mtc-nic"
   location            = azurerm_resource_group.mtc-rg.location
   resource_group_name = azurerm_resource_group.mtc-rg.name
@@ -89,5 +89,37 @@ resource "azurerm_network_interface" "name" {
     public_ip_address_id          = azurerm_public_ip.mtc-ip.id
   }
 
+}
+
+# Create virtual machine
+resource "azurerm_linux_virtual_machine" "my_terraform_vm" {
+  name                  = "mtc-vm"
+  location              = azurerm_resource_group.mtc-rg.location
+  resource_group_name   = azurerm_resource_group.mtc-rg.name
+  network_interface_ids = [azurerm_network_interface.mtc-nic.id]
+  size                  = "Standard_B1s"
+  computer_name         = "hostname"
+  admin_username        = "adminuser"
+  tags = {
+    environment = "dev"
+  }
+
+  os_disk {
+    name                 = "myOsDisk"
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+  }
+
+  source_image_reference {
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "18.04-LTS"
+    version   = "latest"
+  }
+
+  admin_ssh_key {
+    username   = "adminuser"
+    public_key = file("~/.ssh/mtcazurekey.pub") # reads a file
+  }
 
 }

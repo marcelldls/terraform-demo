@@ -10,6 +10,12 @@ az login
 
 ## ssh keys
 
+Create
 ```
 ssh-keygen -t rsa
+```
+
+Access
+```
+ssh -i ~/.ssh/mtcazurekey adminuser@<public_ip>
 ```
