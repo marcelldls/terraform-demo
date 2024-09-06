@@ -92,7 +92,7 @@ resource "azurerm_network_interface" "mtc-nic" {
 }
 
 # Create virtual machine
-resource "azurerm_linux_virtual_machine" "my_terraform_vm" {
+resource "azurerm_linux_virtual_machine" "mtc-vm" {
   name                  = "mtc-vm"
   location              = azurerm_resource_group.mtc-rg.location
   resource_group_name   = azurerm_resource_group.mtc-rg.name
@@ -103,6 +103,7 @@ resource "azurerm_linux_virtual_machine" "my_terraform_vm" {
   tags = {
     environment = "dev"
   }
+  custom_data = filebase64("customdata.tpl") # Sensitive by default
 
   os_disk {
     name                 = "myOsDisk"
@@ -123,3 +124,17 @@ resource "azurerm_linux_virtual_machine" "my_terraform_vm" {
   }
 
 }
+
+# # Datasources allow querying azure for data outside of this deployment
+# data "azurerm_public_ip" "mtc-ip-data" {
+#   name                = azurerm_public_ip.mtc-ip.name
+#   resource_group_name = azurerm_resource_group.mtc-rg.name
+# }
+
+# # Output renders when a plan is applied
+# output "public_ip_address" {
+#   value = "${azurerm_linux_virtual_machine.mtc-vm.name}: ${data.azurerm_public_ip.mtc-ip-data.ip_address}" # Interpolation syntax
+# }
+
+# # Conditional
+# var.a != "" ? var.a : "default-a"
