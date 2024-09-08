@@ -1,19 +1,6 @@
-terraform {
-  required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = "=2.91.0"
-    }
-  }
-}
-
-provider "azurerm" {
-  features {}
-}
-
 resource "azurerm_resource_group" "mtc-rg" {
   name     = "mtc-resources"
-  location = "West Europe"
+  location = "UK South"
   tags = {
     "environment" = "dev"
   }
@@ -103,7 +90,7 @@ resource "azurerm_linux_virtual_machine" "mtc-vm" {
   tags = {
     environment = "dev"
   }
-  custom_data = filebase64("customdata.tpl") # Sensitive by default
+  custom_data = filebase64(var.start_up_script) # Sensitive by default
 
   os_disk {
     name                 = "myOsDisk"
@@ -125,16 +112,3 @@ resource "azurerm_linux_virtual_machine" "mtc-vm" {
 
 }
 
-# # Datasources allow querying azure for data outside of this deployment
-# data "azurerm_public_ip" "mtc-ip-data" {
-#   name                = azurerm_public_ip.mtc-ip.name
-#   resource_group_name = azurerm_resource_group.mtc-rg.name
-# }
-
-# # Output renders when a plan is applied
-# output "public_ip_address" {
-#   value = "${azurerm_linux_virtual_machine.mtc-vm.name}: ${data.azurerm_public_ip.mtc-ip-data.ip_address}" # Interpolation syntax
-# }
-
-# # Conditional
-# var.a != "" ? var.a : "default-a"

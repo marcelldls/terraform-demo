@@ -1,0 +1,1 @@
+start_up_script = "scripts/vm_setup.sh"
