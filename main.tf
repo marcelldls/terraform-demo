@@ -1,6 +1,6 @@
 resource "azurerm_resource_group" "mtc-rg" {
   name     = "mtc-resources"
-  location = "UK South"
+  location = var.location
   tags = {
     "environment" = "dev"
   }
@@ -42,7 +42,7 @@ resource "azurerm_network_security_rule" "mtc-dev-rule" {
   protocol                    = "Tcp"
   source_port_range           = "*"
   destination_port_range      = "*"
-  source_address_prefix       = "*"
+  source_address_prefix       = var.my_ip
   destination_address_prefix  = "*"
 }
 
@@ -100,14 +100,15 @@ resource "azurerm_linux_virtual_machine" "mtc-vm" {
 
   source_image_reference {
     publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "18.04-LTS"
+    offer     = var.offer
+    sku       = var.sku
     version   = "latest"
+
   }
 
   admin_ssh_key {
     username   = "adminuser"
-    public_key = file("~/.ssh/mtcazurekey.pub") # reads a file
+    public_key = file(var.public_key)
   }
 
 }
